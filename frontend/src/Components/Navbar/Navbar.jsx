@@ -8,6 +8,7 @@ import nav_dropdown from "../Assets/nav_dropdown.png"
 import { useRef } from 'react';
 
 
+
 const Navbar = () => {
     const [menu,setMenu]=useState("shop");
     const {getTotalCartItems}=useContext(ShopContext)
@@ -21,8 +22,8 @@ const Navbar = () => {
   return (
     <div className="navbar">
         <div className='nav-logo'>
-            <img src={logo} className='nav-logo'/>
-            <p>SHOPPERS</p>
+            {/* <img src={logo} className='nav-logo'/> */}
+            <p>Storely</p>
         </div>
         <img src={nav_dropdown} alt='' className='nav-dropdown' onClick={dropdown_toggle}/>
         <ul ref={menuRef} className='nav-menu'>

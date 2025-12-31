@@ -69,60 +69,68 @@ const LoginSignup = () => {
   };
 
   return (
-    <div className="loginsignup">
-      <div className="loginsignup-container">
-        <h1>{state}</h1>
+    <div className="loginsignup-container-wrapper">
+      <div className="loginsignup-form-area">
+        <p className="loginsignup-title">{state === "Login" ? "LOGIN" : "SIGN UP"}</p>
 
-        <div className="loginsignup-fields">
+        <form onSubmit={(e) => e.preventDefault()}>
           {state === "Sign Up" && (
-            <input
-              name="username"
-              value={formData.username}
-              onChange={changeHandler}
-              type="text"
-              placeholder="Your Name"
-            />
+            <div className="loginsignup-group">
+              <label className="loginsignup-subtitle">Name</label>
+              <input
+                className="loginsignup-input"
+                name="username"
+                value={formData.username}
+                onChange={changeHandler}
+                placeholder="Enter your full name"
+              />
+            </div>
           )}
 
-          <input
-            name="email"
-            value={formData.email}
-            onChange={changeHandler}
-            type="email"
-            placeholder="Email Address"
-          />
+          <div className="loginsignup-group">
+            <label className="loginsignup-subtitle">Email</label>
+            <input
+              className="loginsignup-input"
+              name="email"
+              value={formData.email}
+              onChange={changeHandler}
+              placeholder="Enter your email"
+            />
+          </div>
 
-          <input
-            name="password"
-            value={formData.password}
-            onChange={changeHandler}
-            type="password"
-            placeholder="Password"
-          />
-        </div>
+          <div className="loginsignup-group">
+            <label className="loginsignup-subtitle">Password</label>
+            <input
+              className="loginsignup-input"
+              name="password"
+              value={formData.password}
+              onChange={changeHandler}
+              placeholder="Enter your password"
+            />
+          </div>
 
-        <button onClick={() => (state === "Login" ? login() : signup())}>
-          Continue
-        </button>
+          <div className="loginsignup-agree">
+            <input type="checkbox" id="agree" />
+            <label htmlFor="agree">I agree to the terms of use and privacy policy</label>
+          </div>
 
-        {state === "Sign Up" ? (
-          <p className="loginsignup-login">
-            Already have an account?
-            <span onClick={() => setState("Login")}> Login here</span>
-          </p>
-        ) : (
-          <p className="loginsignup-login">
-            Create an Account
-            <span onClick={() => setState("Sign Up")}> Click here</span>
-          </p>
-        )}
+          <button
+            className="loginsignup-btn"
+            onClick={() => (state === "Login" ? login() : signup())}
+          >
+            {state === "Login" ? "LOGIN" : "SIGN UP"}
+          </button>
 
-        <div className="loginsignup-agree">
-          <input type="checkbox" />
           <p>
-            By continuing, I agree to the terms of use and privacy policy
+            {state === "Login" ? "Don't have an account?" : "Have an Account?"}{" "}
+            <span
+              className="loginsignup-link"
+              onClick={() => setState(state === "Login" ? "Sign Up" : "Login")}
+            >
+              {state === "Login" ? "Sign Up Here" : "Login Here"}
+            </span>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

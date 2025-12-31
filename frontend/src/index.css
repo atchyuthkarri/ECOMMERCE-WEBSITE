@@ -1,17 +1,37 @@
-*{
-  margin:0px
-}
-body {
+/* Reset */
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-family: "poppins";
+  padding: 0;
+  box-sizing: border-box;
 }
 
+:root {
+  --primary: #1C1C1E;      /* Main text / headings */
+  --accent: #D89CA4;       /* Pink for highlights, buttons, hero text */
+  --text: #2E2E2E;         /* Secondary text */
+  --border: #E6E1D8;       /* Borders / old prices */
+  --card-bg: #FFFFFF;       /* Cards / input bg */
+  --hero-grad-start: #FDE1FF; /* Hero gradient start */
+  --hero-grad-end: #FFF5F6;   /* Hero gradient end */
+  --newsletter-grad-start: #FDE1FF; /* Newsletter gradient start */
+  --newsletter-grad-end: #FFFFFF;   /* Newsletter gradient end */
+}
+
+/* Global styles */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Code blocks */
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }

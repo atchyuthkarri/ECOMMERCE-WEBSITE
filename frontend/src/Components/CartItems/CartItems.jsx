@@ -4,10 +4,9 @@ import { ShopContext } from "../../context/ShopContext";
 import remove_icon from "../Assets/cart_cross_icon.png";
 
 const CartItems = () => {
-  const { all_product, cartItems, removeFromCart, getTotalCartAmount } = useContext(ShopContext);
+  const { getCartItemsWithDetails, removeFromCart, getTotalCartAmount } = useContext(ShopContext);
 
-  // Only products with quantity > 0
-  const productsInCart = all_product.filter((product) => cartItems[product.id] > 0);
+  const productsInCart = getCartItemsWithDetails();
 
   if (productsInCart.length === 0)
     return <p style={{ textAlign: "center", marginTop: "20px" }}>Your cart is empty!</p>;
@@ -30,8 +29,8 @@ const CartItems = () => {
             <img className="carticon-product-icon" src={product.image} alt={product.name} />
             <p>{product.name}</p>
             <p>${product.new_price}</p>
-            <button className="cartitems-quantity">{cartItems[product.id]}</button>
-            <p>${cartItems[product.id] * product.new_price}</p>
+            <button className="cartitems-quantity">{product.qty}</button>
+            <p>${product.qty * product.new_price}</p>
             <img
               className="carticons-remove-icon"
               src={remove_icon}

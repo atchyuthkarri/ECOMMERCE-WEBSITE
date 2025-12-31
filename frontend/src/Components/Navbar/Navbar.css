@@ -2,28 +2,34 @@
     display: flex;
     justify-content: space-around;
     padding: 16px;
-    box-shadow: 0 1px 3px -2px black;
+    box-shadow: 0 1px 3px -2px var(--primary);
     align-items: center;
+    background-color: var(--bg);
 }
+
 .nav-logo{
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .nav-logo p{
-    color: #171717;
     font-size: 38px;
     font-weight: 600;
+    font-family: "Lavishly Yours", cursive;
+    color: var(--accent);
 }
+
 .nav-menu{
     display: flex;
     align-items: center;
     list-style: none;
     gap: 50px;
-    color: #626262;
+    color: var(--primary);
     font-size: 20px;
     font-weight: 500;
 }
+
 .nav-menu li{
     display: flex;
     flex-direction: column;
@@ -32,41 +38,64 @@
     gap: 3px;
     cursor: pointer;
 }
+
 .nav-menu hr{
     border: none;
     width: 80%;
     height: 3px;
     border-radius: 10px;
-    background: #ff4141;
+    background: var(--accent);
 }
+
 .nav-login-cart{
     display: flex;
     align-items: center;
     gap: 45px;
+}
 
-}
-.nav-login-cart button{
-    width: 157px;
-    height: 58px;
-    outline: none;
-    border: 1px solid #7a7a7a;
-    border-radius:75px;
-    color: #515151;
-    font-size: 20px;
-    font-weight: 500;
-    background-color: white;
-    cursor: pointer;
-}
+.nav-login-cart button {
+    border: none;
+    color: #fff;
+    background-image: linear-gradient(30deg, #D89CA4, #D89CA4);
+    border-radius: 20px;
+    background-size: 100% auto;
+    font-family: inherit;
+    font-size: 17px;
+    padding: 0.6em 1.5em;
+   }
+   
+   button:hover {
+    background-position: right center;
+    background-size: 200% auto;
+    -webkit-animation: pulse 2s infinite;
+    animation: pulse512 1.5s infinite;
+   }
+   
+   @keyframes pulse512 {
+    0% {
+     box-shadow: 0 0 0 0 #05bada66;
+    }
+   
+    70% {
+     box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+    }
+   
+    100% {
+     box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+    }
+   }
+
 .nav-login-cart button:active{
-    background: #f3f3f3;
+    background: #FCE3FC;
 }
+
 .nav-cart-count {
     margin-top: -35px;
     margin-left: -55px;
     width: 22px;
     height: 22px;
-    background: #ff4141;
-    color: white;
+    background: var(--accent);
+    color: #fff;
     font-size: 14px;
     border-radius: 11px;
     display: flex;
@@ -75,8 +104,9 @@
 }
 
 .nav-dropdown{
-    display: none
+    display: none;
 }
+
 /* Responsive Design */
 
 @media(max-width: 1280px) {
@@ -87,7 +117,7 @@
         width: 40px;
     }
     .nav-logo p{
-        font-size: 25px;
+        font-size: 35px;
     }
     .nav-menu{
         gap: 30px;
@@ -104,9 +134,7 @@
     .nav-cart-count{
         margin-left: -40px;
         font-size: 12px;
-
     }
-    
 }
 
 @media (max-width:1024px){
@@ -116,12 +144,11 @@
     .nav-menu{
         gap: 25px;
         font-size: 14px;
-
     }
     .nav-login-cart button{
-    width: 80px;
-    height: 35px;
-    font-size: 14px;
+        width: 80px;
+        height: 35px;
+        font-size: 14px;
     }
     .nav-login-cart img{
         width: 30px;
@@ -141,13 +168,12 @@
         width: 30px;
         rotate: -90deg;
         transition: 0.5s;
-        
     }
     .nav-menu{
         display: none;
         height: 80px;
         width: 100%;
-        background-color: white;
+        background-color: var(--bg);
         position: absolute;
         justify-content: center;
         top:50px;
@@ -158,8 +184,8 @@
     .nav-dropdown.open{
         transform: rotate(90deg);
     }
-
 }
+
 @media (max-width:500px){
     .navbar {
         padding: 8px 0px;
@@ -174,9 +200,5 @@
     }
     .nav-login-cart{
         transform: scale(0.8);
-        -webkit-transform: scale();
-        -moz-transform: scale();
-        -ms-transform: scale();
-        -o-transform: scale();
-}
+    }
 }
