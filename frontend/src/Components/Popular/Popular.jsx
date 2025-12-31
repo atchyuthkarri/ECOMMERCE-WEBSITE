@@ -2,13 +2,14 @@ import React,{useEffect, useState} from 'react'
 import "./Popular.css"
 import data_product from "../Assets/data"
 import Item from '../Item/Item.jsx'
-
+// src/config.js
+export const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
 const Popular = () => {
 
   const [popularProducts,setPopularProducts] =useState([]);
 
   useEffect(()=>{
-    fetch("http://localhost:4000/popularinwomen")
+    fetch(`${BASE_URL}/popularinwomen`)
     .then((response)=>response.json())
     .then((data)=>setPopularProducts(data));
   },[])

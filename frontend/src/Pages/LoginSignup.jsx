@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./CSS/LoginSignup.css";
 
+const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
+
 const LoginSignup = () => {
   const [state, setState] = useState("Login");
 
@@ -19,7 +21,7 @@ const LoginSignup = () => {
 
   const login = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:4000/login", {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +48,7 @@ const LoginSignup = () => {
 
   const signup = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:4000/signup", {
+      const response = await fetch(`${BASE_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,6 +105,7 @@ const LoginSignup = () => {
             <input
               className="loginsignup-input"
               name="password"
+              type="password"
               value={formData.password}
               onChange={changeHandler}
               placeholder="Enter your password"

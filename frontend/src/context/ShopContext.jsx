@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
 
 export const ShopContext = createContext(null);
+// src/config.js
+export const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
 
 const ShopContextProvider = ({ children }) => {
   const [all_product, setAll_Product] = useState([]);
@@ -11,7 +13,7 @@ const ShopContextProvider = ({ children }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:4000/allproducts");
+        const res = await fetch(`${BASE_URL}/allproducts`);
         const data = await res.json();
         setAll_Product(data);
       } catch (err) {
@@ -30,7 +32,7 @@ const ShopContextProvider = ({ children }) => {
       if (!token || loadingProducts) return;
 
       try {
-        const res = await fetch("http://localhost:4000/getcart", {
+        const res = await fetch(`${BASE_URL}/getcart`, {
           headers: { "auth-token": token, Accept: "application/json" },
         });
         const data = await res.json();
@@ -55,7 +57,7 @@ const ShopContextProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:4000/${action === "add" ? "addtocart" : "removefromcart"}`,
+        `${BASE_URL}/${action === "add" ? "addtocart" : "removefromcart"}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", "auth-token": token },
