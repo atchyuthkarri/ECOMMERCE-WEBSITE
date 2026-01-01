@@ -133,6 +133,26 @@ app.get("/getcart", fetchUser, async (req, res) => {
 app.get("/allproducts", async (_, res) => {
   res.json(await Product.find({}));
 });
+// ===== NEW COLLECTIONS =====
+app.get("/newcollections", async (req, res) => {
+  try {
+    const products = await Product.find({});
+    const newCollections = products.slice(-8);
+    res.json(newCollections);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch new collections" });
+  }
+});
+
+// ===== POPULAR IN WOMEN =====
+app.get("/popularinwomen", async (req, res) => {
+  try {
+    const products = await Product.find({ category: "women" }).limit(4);
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch popular women products" });
+  }
+});
 
 // ===== START SERVER =====
 app.listen(port, () => {

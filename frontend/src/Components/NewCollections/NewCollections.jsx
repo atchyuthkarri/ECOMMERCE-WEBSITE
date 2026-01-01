@@ -3,13 +3,13 @@ import "./NewCollections.css"
 import Item from '../Item/Item.jsx'
 
 // src/config.js
-export const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
+const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
 const NewCollections = () => {
 
   const [new_collection,setNew_collection]=useState([]);
 
   useEffect(()=>{
-    fetch(`${BASE_URL}/newcollections`)
+    fetch(`https://ecommerce-backend-9yw2.onrender.com/newcollections`)
     .then((response)=>response.json())
     .then((data)=>setNew_collection(data));
   },[])
