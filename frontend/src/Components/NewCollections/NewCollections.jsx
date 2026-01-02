@@ -9,7 +9,7 @@ const NewCollections = () => {
   const [new_collection,setNew_collection]=useState([]);
 
   useEffect(()=>{
-    fetch(`https://ecommerce-backend-9yw2.onrender.com/newcollections`)
+    fetch(`${BASE_URL}/newcollections`)
     .then((response)=>response.json())
     .then((data)=>setNew_collection(data));
   },[])
