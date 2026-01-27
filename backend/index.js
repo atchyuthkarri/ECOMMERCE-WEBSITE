@@ -1,44 +1,45 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 
+const app = express();
 const port = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // ===== MIDDLEWARE =====
 app.use(express.json());
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST"]
-}));
+app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 app.use("/images", express.static("upload/images"));
+
+// ===== RESPONSE HELPER (IMPORTANT) =====
+const sendResponse = (res, status, success, data = [], message = "") => {
+  res.status(status).json({ success, data, message });
+};
 
 // ===== MONGODB CONNECTION =====
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
 // ===== IMAGE UPLOAD =====
 const storage = multer.diskStorage({
   destination: "./upload/images",
   filename: (req, file, cb) => {
-    cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
+    cb(null, `${Date.now()}_${file.originalname}`);
   },
 });
 const upload = multer({ storage });
 
 app.post("/upload", upload.single("product"), (req, res) => {
-  res.json({
-    success: true,
-    image_url: `${process.env.BACKEND_URL}/images/${req.file.filename}`,
-  });
+  sendResponse(res, 200, true, [
+    `${process.env.BACKEND_URL}/images/${req.file.filename}`,
+  ]);
 });
 
 // ===== MODELS =====
@@ -50,7 +51,7 @@ const Product = mongoose.model("Product", {
   new_price: Number,
   old_price: Number,
   date: { type: Date, default: Date.now },
-  available: { type: Boolean, default: true },
+  available: Boolean,
 });
 
 const Users = mongoose.model("Users", {
@@ -64,42 +65,41 @@ const Users = mongoose.model("Users", {
 // ===== AUTH MIDDLEWARE =====
 const fetchUser = async (req, res, next) => {
   const token = req.header("auth-token");
-  if (!token) return res.status(401).json({ error: "Authentication token missing" });
+  if (!token) return sendResponse(res, 401, false, [], "Token missing");
 
   try {
     const data = jwt.verify(token, JWT_SECRET);
     req.user = data.user;
     next();
   } catch {
-    res.status(401).json({ error: "Invalid token" });
+    sendResponse(res, 401, false, [], "Invalid token");
   }
 };
 
-// ===== ROUTES =====
-app.get("/", (req, res) => res.send("API running"));
+// ===== HEALTH CHECK =====
+app.get("/", (req, res) => {
+  sendResponse(res, 200, true, [], "API running");
+});
 
+// ===== AUTH =====
 app.post("/signup", async (req, res) => {
   const exists = await Users.findOne({ email: req.body.email });
-  if (exists) return res.json({ success: false });
+  if (exists) return sendResponse(res, 400, false, [], "User exists");
 
-  const user = new Users({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
+  const user = new Users(req.body);
   await user.save();
 
   const token = jwt.sign({ user: { id: user._id } }, JWT_SECRET);
-  res.json({ success: true, token });
+  sendResponse(res, 200, true, [token], "Signup successful");
 });
 
 app.post("/login", async (req, res) => {
   const user = await Users.findOne({ email: req.body.email });
   if (!user || user.password !== req.body.password)
-    return res.json({ success: false });
+    return sendResponse(res, 400, false, [], "Invalid credentials");
 
   const token = jwt.sign({ user: { id: user._id } }, JWT_SECRET);
-  res.json({ success: true, token });
+  sendResponse(res, 200, true, [token], "Login successful");
 });
 
 // ===== CART =====
@@ -110,7 +110,7 @@ app.post("/addtocart", fetchUser, async (req, res) => {
   user.cartData.set(id, (user.cartData.get(id) || 0) + 1);
   await user.save();
 
-  res.json({ success: true, cartData: Object.fromEntries(user.cartData) });
+  sendResponse(res, 200, true, [Object.fromEntries(user.cartData)], "Added to cart");
 });
 
 app.post("/removefromcart", fetchUser, async (req, res) => {
@@ -121,36 +121,42 @@ app.post("/removefromcart", fetchUser, async (req, res) => {
   qty <= 0 ? user.cartData.delete(id) : user.cartData.set(id, qty);
   await user.save();
 
-  res.json({ success: true, cartData: Object.fromEntries(user.cartData) });
+  sendResponse(res, 200, true, [Object.fromEntries(user.cartData)], "Removed from cart");
 });
 
 app.get("/getcart", fetchUser, async (req, res) => {
   const user = await Users.findById(req.user.id);
-  res.json({ success: true, cartData: Object.fromEntries(user.cartData) });
+  sendResponse(res, 200, true, [Object.fromEntries(user.cartData)], "Cart fetched");
 });
 
 // ===== PRODUCTS =====
-app.get("/allproducts", async (_, res) => {
-  res.json(await Product.find({}));
-});
-// ===== NEW COLLECTIONS =====
-app.get("/newcollections", async (req, res) => {
+app.get("/allproducts", async (req, res) => {
   try {
     const products = await Product.find({});
-    const newCollections = products.slice(-8);
-    res.json(newCollections);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch new collections" });
+    sendResponse(res, 200, true, products, "All products fetched");
+  } catch {
+    sendResponse(res, 500, false, [], "Failed to fetch products");
   }
 });
 
-// ===== POPULAR IN WOMEN =====
+app.get("/newcollections", async (req, res) => {
+  try {
+    const products = await Product.find({});
+    sendResponse(res, 200, true, products.slice(-8), "New collections fetched");
+  } catch {
+    sendResponse(res, 500, false, [], "Failed to fetch collections");
+  }
+});
+
 app.get("/popularinwomen", async (req, res) => {
   try {
-    const products = await Product.find({ category: "women" }).limit(4);
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch popular women products" });
+    const products = await Product.find({
+      category: { $regex: /^women$/i }
+    }).limit(4);
+
+    sendResponse(res, 200, true, products, "Popular women products fetched");
+  } catch {
+    sendResponse(res, 500, false, [], "Failed to fetch popular products");
   }
 });
 

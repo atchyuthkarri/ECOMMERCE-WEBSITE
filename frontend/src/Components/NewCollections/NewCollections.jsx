@@ -8,11 +8,16 @@ const NewCollections = () => {
 
   const [new_collection,setNew_collection]=useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`${BASE_URL}/newcollections`)
-    .then((response)=>response.json())
-    .then((data)=>setNew_collection(data));
-  },[])
+      .then((response) => response.json())
+      .then((json) => {
+        setNew_collection(json.data || []);
+      })
+      .catch(() => {
+        setNew_collection([]);
+      });
+  }, []);
 
   return (
     <div className='new-collections'>
