@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Popular.css";
-import Item from "../Item/Item.jsx";
-
-// Backend base URL
-export const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
+import Item from "../Item/Item";
+import { BASE_URL } from "../../context/ShopContext"; // reuse your backend base URL
 
 const Popular = () => {
   const [popularProducts, setPopularProducts] = useState([]);
@@ -15,12 +13,9 @@ const Popular = () => {
         const res = await fetch(`${BASE_URL}/popularinwomen`);
         const data = await res.json();
 
-        // ✅ Always ensure array
-        setPopularProducts(
-          Array.isArray(data)
-            ? data
-            : data.popularProducts || data.data || []
-        );
+        const products = data.data || []; // backend returns in "data"
+        // Ensure we only take 4 products
+        setPopularProducts(products.slice(0, 4));
       } catch (error) {
         console.error("Error fetching popular products:", error);
         setPopularProducts([]);
@@ -38,19 +33,16 @@ const Popular = () => {
       <hr />
 
       <div className="popular-item">
-        {loading && <p>Waking up server… ⏳</p>}
-
-        {!loading && popularProducts.length === 0 && (
-          <p>No popular products found</p>
-        )}
+        {loading && <p>Loading… ⏳</p>}
+        {!loading && popularProducts.length === 0 && <p>No popular products found</p>}
 
         {!loading &&
-          popularProducts.map((item, i) => (
+          popularProducts.map((item) => (
             <Item
-              key={i}
-              id={item.id}
+              key={item._id}
+              _id={item._id}
               name={item.name}
-              image={item.image}
+              image={item.image}   // ✅ NO BASE_URL
               new_price={item.new_price}
               old_price={item.old_price}
             />

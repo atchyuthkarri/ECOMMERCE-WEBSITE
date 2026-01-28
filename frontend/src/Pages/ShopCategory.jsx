@@ -1,23 +1,22 @@
 import React, { useContext } from "react";
 import "./CSS/ShopCategory.css";
-import { ShopContext } from "../context/ShopContext";
-import dropdown_icon from "../Components/Assets/dropdown_icon.png";
+import { ShopContext, BASE_URL } from "../context/ShopContext";
 import Item from "../Components/Item/Item";
+import dropdown_icon from "../Components/Assets/dropdown_icon.png";
 
-const ShopCategory = (props) => {
+const ShopCategory = ({ banner, category }) => {
   const { all_product } = useContext(ShopContext);
+  const filteredProducts = all_product.filter(
+    (item) => item.category.toLowerCase() === category.toLowerCase()
+  );
 
   return (
     <div className="shop-category">
-      <img
-        className="shopcategory-banner"
-        src={props.banner}
-        alt="banner"
-      />
+      <img className="shopcategory-banner" src={`${BASE_URL}/${banner}`} alt="banner" />
 
       <div className="shopcategory-indexsort">
         <p>
-          <span>Showing 1-12</span> Out of {all_product.length} products
+          <span>Showing 1-{filteredProducts.length}</span> Out of {filteredProducts.length} products
         </p>
         <div className="shopcategory-sort">
           Sort by <img src={dropdown_icon} alt="" />
@@ -25,23 +24,9 @@ const ShopCategory = (props) => {
       </div>
 
       <div className="shopcategory-products">
-        {Array.isArray(all_product) &&
-          all_product
-            .filter(
-              (item) =>
-                item.category?.toLowerCase() ===
-                props.category.toLowerCase()
-            )
-            .map((item) => (
-              <Item
-                key={item._id}
-                id={item._id}
-                name={item.name}
-                image={item.image}
-                new_price={item.new_price}
-                old_price={item.old_price}
-              />
-            ))}
+        {filteredProducts.map((item) => (
+          <Item key={item._id} {...item} />
+        ))}
       </div>
 
       <div className="shopcategory-loadmore">Explore More</div>

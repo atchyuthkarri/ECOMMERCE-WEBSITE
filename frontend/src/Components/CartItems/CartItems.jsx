@@ -24,23 +24,23 @@ const CartItems = () => {
       <hr />
 
       {productsInCart.map((product) => (
-        <div key={product.id}>
-          <div className="cartitems-format-main cartitems-format">
-            <img className="carticon-product-icon" src={product.image} alt={product.name} />
-            <p>{product.name}</p>
-            <p>${product.new_price}</p>
-            <button className="cartitems-quantity">{product.qty}</button>
-            <p>${product.qty * product.new_price}</p>
-            <img
-              className="carticons-remove-icon"
-              src={remove_icon}
-              alt="Remove"
-              onClick={() => removeFromCart(product.id)}
-            />
-          </div>
-          <hr />
-        </div>
-      ))}
+  <div key={product._id}>
+    <div className="cartitems-format-main cartitems-format">
+      <img className="carticon-product-icon" src={product.image} alt={product.name} />
+      <p>{product.name}</p>
+      <p>${product.new_price}</p>
+      <button className="cartitems-quantity">{product.qty}</button>
+      <p>${product.qty * product.new_price}</p>
+      <img
+        className="carticons-remove-icon"
+        src={remove_icon}
+        alt="Remove"
+        onClick={() => removeFromCart(product._id)} // ✅ use _id
+      />
+    </div>
+    <hr />
+  </div>
+))}
 
       <div className="cartitems-down">
         <div className="cartitems-total">
