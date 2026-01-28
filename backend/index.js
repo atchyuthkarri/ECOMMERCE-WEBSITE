@@ -42,6 +42,7 @@ app.post("/upload", upload.single("product"), (req, res) => {
   ]);
 });
 
+
 // ===== MODELS =====
 const Product = mongoose.model("Product", {
   id: Number,
@@ -62,6 +63,7 @@ const Users = mongoose.model("Users", {
   date: { type: Date, default: Date.now },
 });
 
+
 // ===== AUTH MIDDLEWARE =====
 const fetchUser = async (req, res, next) => {
   const token = req.header("auth-token");
@@ -76,10 +78,12 @@ const fetchUser = async (req, res, next) => {
   }
 };
 
+
 // ===== HEALTH CHECK =====
 app.get("/", (req, res) => {
   sendResponse(res, 200, true, [], "API running");
 });
+
 
 // ===== AUTH =====
 app.post("/signup", async (req, res) => {
@@ -101,6 +105,7 @@ app.post("/login", async (req, res) => {
   const token = jwt.sign({ user: { id: user._id } }, JWT_SECRET);
   sendResponse(res, 200, true, [token], "Login successful");
 });
+
 
 // ===== CART =====
 app.post("/addtocart", fetchUser, async (req, res) => {
