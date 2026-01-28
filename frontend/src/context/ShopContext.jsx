@@ -1,31 +1,36 @@
 import React, { createContext, useEffect, useState } from "react";
 
 export const ShopContext = createContext(null);
-// src/config.js
+
+// backend base url
 export const BASE_URL = "https://ecommerce-backend-9yw2.onrender.com";
 
 const ShopContextProvider = ({ children }) => {
-  const [all_product, setAll_Product] = useState([]);
-  const [cartItems, setCartItems] = useState({}); // { [productId]: quantity }
+  const [all_product, setAll_Product] = useState([]); // ✅ always array
+  const [cartItems, setCartItems] = useState({});
   const [loadingProducts, setLoadingProducts] = useState(true);
 
-  // Fetch all products
+  // 🔹 Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(`${BASE_URL}/allproducts`);
-        const data = await res.json();
-        setAll_Product(data);
+        const result = await res.json();
+
+        // ✅ IMPORTANT FIX: extract array only
+        setAll_Product(result.data || []);
       } catch (err) {
         console.error("Fetch products error:", err);
+        setAll_Product([]); // fail-safe
       } finally {
         setLoadingProducts(false);
       }
     };
+
     fetchProducts();
   }, []);
 
-  // Fetch cart for logged-in user **after products are loaded**
+  // 🔹 Fetch cart AFTER products are loaded
   useEffect(() => {
     const fetchCart = async () => {
       const token = localStorage.getItem("auth-token");
@@ -33,13 +38,18 @@ const ShopContextProvider = ({ children }) => {
 
       try {
         const res = await fetch(`${BASE_URL}/getcart`, {
-          headers: { "auth-token": token, Accept: "application/json" },
+          headers: {
+            "auth-token": token,
+            Accept: "application/json",
+          },
         });
+
         const data = await res.json();
+
         if (data.success && data.cartData) {
           const normalizedCart = {};
           Object.entries(data.cartData).forEach(([id, qty]) => {
-            if (qty > 0) normalizedCart[Number(id)] = qty;
+            if (qty > 0) normalizedCart[id] = qty;
           });
           setCartItems(normalizedCart);
         }
@@ -49,8 +59,9 @@ const ShopContextProvider = ({ children }) => {
     };
 
     fetchCart();
-  }, [loadingProducts]); // only run after products loaded
+  }, [loadingProducts]);
 
+  // 🔹 Sync cart with server
   const syncCartWithServer = async (itemId, action = "add") => {
     const token = localStorage.getItem("auth-token");
     if (!token) return;
@@ -60,16 +71,20 @@ const ShopContextProvider = ({ children }) => {
         `${BASE_URL}/${action === "add" ? "addtocart" : "removefromcart"}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", "auth-token": token },
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": token,
+          },
           body: JSON.stringify({ itemId }),
         }
       );
 
       const data = await res.json();
+
       if (data.success && data.cartData) {
         const normalizedCart = {};
         Object.entries(data.cartData).forEach(([id, qty]) => {
-          if (qty > 0) normalizedCart[Number(id)] = qty;
+          if (qty > 0) normalizedCart[id] = qty;
         });
         setCartItems(normalizedCart);
       }
@@ -81,9 +96,12 @@ const ShopContextProvider = ({ children }) => {
   const addToCart = (itemId) => syncCartWithServer(itemId, "add");
   const removeFromCart = (itemId) => syncCartWithServer(itemId, "remove");
 
+  // 🔹 Cart helpers
   const getTotalCartAmount = () =>
     Object.entries(cartItems).reduce((total, [id, qty]) => {
-      const product = all_product.find((p) => p.id === Number(id));
+      const product = all_product.find(
+        (p) => p._id === id || p.id === Number(id)
+      );
       return product ? total + qty * product.new_price : total;
     }, 0);
 
@@ -93,10 +111,12 @@ const ShopContextProvider = ({ children }) => {
   const getCartItemsWithDetails = () =>
     Object.entries(cartItems)
       .map(([id, qty]) => {
-        const product = all_product.find((p) => p.id === Number(id));
+        const product = all_product.find(
+          (p) => p._id === id || p.id === Number(id)
+        );
         return product ? { ...product, qty } : null;
       })
-      .filter((item) => item !== null);
+      .filter(Boolean);
 
   return (
     <ShopContext.Provider
@@ -108,6 +128,7 @@ const ShopContextProvider = ({ children }) => {
         getTotalCartAmount,
         getTotalCartItems,
         getCartItemsWithDetails,
+        loadingProducts,
       }}
     >
       {children}

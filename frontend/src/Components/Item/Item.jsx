@@ -11,7 +11,7 @@ const Item = (props) => {
     <div className='item'>
       <Link to={`/product/${props.id}`} onClick={handleClick}>
         <img src={props.image} alt={props.name} />
-      </Link> 
+      </Link>
       <p>{props.name}</p>
       <div className='item-prices'>
         <div className='item-price-new'>
